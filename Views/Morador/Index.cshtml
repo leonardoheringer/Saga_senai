@@ -1,0 +1,102 @@
+@model Morador
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user"></i> Meu Perfil</h2>
+    <a asp-action="Edit" class="btn btn-primary">
+        <i class="fas fa-edit"></i> Editar Perfil
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Dados Pessoais</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Nome:</strong><br>
+                        @Model.Nome
+                    </div>
+                    <div class="col-md-6">
+                        <strong>CPF:</strong><br>
+                        @Model.CPF
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Email:</strong><br>
+                        @Model.Email
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Telefone:</strong><br>
+                        @(Model.Telefone ?? "Não informado")
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <strong>Endereço:</strong><br>
+                        @(Model.Endereco ?? "Não informado")
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Dados Socioeconômicos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Região:</strong><br>
+                        @Model.Regiao
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Escolaridade:</strong><br>
+                        @Model.Escolaridade
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Renda Familiar:</strong><br>
+                        @(Model.RendaFamiliar?.ToString("C") ?? "Não informado")
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Data de Cadastro:</strong><br>
+                        @Model.DataCadastro.ToString("dd/MM/yyyy")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-action="Avisos" class="btn btn-info">
+                        <i class="fas fa-bullhorn"></i> Ver Avisos
+                    </a>
+                    <a asp-action="EnviarFeedback" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Enviar Feedback
+                    </a>
+                    <a asp-action="MeusFeedbacks" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> Meus Feedbacks
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

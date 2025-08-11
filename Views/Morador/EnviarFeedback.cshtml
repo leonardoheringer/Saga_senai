@@ -1,0 +1,67 @@
+@model Feedback
+@{
+    ViewData["Title"] = "Enviar Feedback";
+}
+
+<h2><i class="fas fa-paper-plane"></i> Enviar Feedback</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Nova Sugestão/Pedido</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EnviarFeedback">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="Titulo" class="form-label"></label>
+                        <input asp-for="Titulo" class="form-control" placeholder="Digite um título para seu feedback" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="Mensagem" class="form-label"></label>
+                        <textarea asp-for="Mensagem" class="form-control" rows="6" placeholder="Descreva sua sugestão ou pedido detalhadamente..."></textarea>
+                        <span asp-validation-for="Mensagem" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="submit" value="Enviar Feedback" class="btn btn-primary" />
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Informações</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Como funciona:</strong></p>
+                <ul>
+                    <li>Envie suas sugestões e pedidos</li>
+                    <li>A administração irá analisar</li>
+                    <li>Você receberá uma resposta</li>
+                    <li>Acompanhe o status em "Meus Feedbacks"</li>
+                </ul>
+                
+                <p><strong>Status possíveis:</strong></p>
+                <ul>
+                    <li><span class="badge bg-warning">Pendente</span> - Aguardando análise</li>
+                    <li><span class="badge bg-success">Aprovado</span> - Feedback aprovado</li>
+                    <li><span class="badge bg-danger">Rejeitado</span> - Feedback rejeitado</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

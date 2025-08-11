@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Página Inicial";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bem-vindo ao Sistema Petrobras</h1>
+    <p class="lead">Sistema de gestão de moradores e comunicação</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-users text-primary"></i> Para Moradores
+                </h5>
+                <p class="card-text">
+                    Cadastre-se, visualize avisos e envie sugestões para a administração.
+                </p>
+                @if (User.Identity != null && !User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Registrar-se
+                    </a>
+                }
+                else if (User.IsInRole("Morador"))
+                {
+                    <a asp-controller="Morador" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-user"></i> Meu Perfil
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-cog text-success"></i> Para Administradores
+                </h5>
+                <p class="card-text">
+                    Acesse o dashboard, gerencie moradores e modere feedbacks.
+                </p>
+                @if (User.Identity != null && !User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt"></i> Fazer Login
+                    </a>
+                }
+                else if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-success">
+                        <i class="fas fa-chart-bar"></i> Dashboard
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.Identity != null && !User.Identity.IsAuthenticated)
+{
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Informações de Acesso</h5>
+                <p><strong>Administrador padrão:</strong></p>
+                <ul>
+                    <li>Email: admin@petrobras.com</li>
+                    <li>Senha: Admin123!</li>
+                </ul>
+                <p><strong>Para moradores:</strong> Registre-se como novo usuário e será automaticamente atribuído o papel de "Morador".</p>
+            </div>
+        </div>
+    </div>
+}
+

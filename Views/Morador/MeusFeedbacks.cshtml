@@ -1,0 +1,73 @@
+@model List<Feedback>
+@{
+    ViewData["Title"] = "Meus Feedbacks";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-list"></i> Meus Feedbacks</h2>
+    <a asp-action="EnviarFeedback" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Novo Feedback
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var feedback in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">@feedback.Titulo</h5>
+                        <div>
+                            @switch (feedback.Status)
+                            {
+                                case StatusFeedback.Pendente:
+                                    <span class="badge bg-warning">Pendente</span>
+                                    break;
+                                case StatusFeedback.Aprovado:
+                                    <span class="badge bg-success">Aprovado</span>
+                                    break;
+                                case StatusFeedback.Rejeitado:
+                                    <span class="badge bg-danger">Rejeitado</span>
+                                    break;
+                            }
+                            <small class="text-muted ms-2">
+                                <i class="fas fa-calendar"></i> @feedback.DataEnvio.ToString("dd/MM/yyyy HH:mm")
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@Html.Raw(feedback.Mensagem.Replace("\n", "<br>"))</p>
+                        
+                        @if (!string.IsNullOrEmpty(feedback.Resposta))
+                        {
+                            <hr>
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-reply"></i> Resposta da Administração:</h6>
+                                <p class="mb-0">@Html.Raw(feedback.Resposta.Replace("\n", "<br>"))</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> @feedback.DataResposta?.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Você ainda não enviou nenhum feedback.
+        <a asp-action="EnviarFeedback" class="alert-link">Clique aqui para enviar seu primeiro feedback.</a>
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar ao Perfil
+    </a>
+}
+

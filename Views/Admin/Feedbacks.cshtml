@@ -1,0 +1,92 @@
+@model List<Feedback>
+@{
+    ViewData["Title"] = "Moderação de Feedbacks";
+}
+
+<h2><i class="fas fa-comments"></i> Moderação de Feedbacks</h2>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var feedback in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">@feedback.Titulo</h5>
+                        <div>
+                            @switch (feedback.Status)
+                            {
+                                case StatusFeedback.Pendente:
+                                    <span class="badge bg-warning">Pendente</span>
+                                    break;
+                                case StatusFeedback.Aprovado:
+                                    <span class="badge bg-success">Aprovado</span>
+                                    break;
+                                case StatusFeedback.Rejeitado:
+                                    <span class="badge bg-danger">Rejeitado</span>
+                                    break;
+                            }
+                            <small class="text-muted ms-2">
+                                <i class="fas fa-calendar"></i> @feedback.DataEnvio.ToString("dd/MM/yyyy HH:mm")
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@Html.Raw(feedback.Mensagem.Replace("\n", "<br>"))</p>
+                        
+                        @if (feedback.Status == StatusFeedback.Pendente)
+                        {
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <form asp-action="RejeitarFeedback" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@feedback.Id" />
+                                        <div class="input-group">
+                                            <input type="text" name="resposta" class="form-control" placeholder="Motivo da rejeição (opcional)" />
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fas fa-times"></i> Rejeitar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <form asp-action="AprovarFeedback" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@feedback.Id" />
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-check"></i> Aprovar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(feedback.Resposta))
+                        {
+                            <hr>
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-reply"></i> Resposta:</h6>
+                                <p class="mb-0">@Html.Raw(feedback.Resposta.Replace("\n", "<br>"))</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> @feedback.DataResposta?.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Não há feedbacks para moderar no momento.
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Dashboard" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+    </a>
+}
+

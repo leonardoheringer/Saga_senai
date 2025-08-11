@@ -1,0 +1,214 @@
+@model List<Morador>
+@{
+    ViewData["Title"] = "Dashboard Administrativo";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-chart-bar"></i> Dashboard Administrativo</h2>
+    <div>
+        <a asp-action="ExportarCSV" class="btn btn-success me-2" 
+           asp-route-regiao="@ViewBag.FiltroRegiao" 
+           asp-route-escolaridade="@ViewBag.FiltroEscolaridade"
+           asp-route-dataInicio="@ViewBag.FiltroDataInicio"
+           asp-route-dataFim="@ViewBag.FiltroDataFim">
+            <i class="fas fa-file-csv"></i> Exportar CSV
+        </a>
+        <a asp-action="ExportarPDF" class="btn btn-danger"
+           asp-route-regiao="@ViewBag.FiltroRegiao" 
+           asp-route-escolaridade="@ViewBag.FiltroEscolaridade"
+           asp-route-dataInicio="@ViewBag.FiltroDataInicio"
+           asp-route-dataFim="@ViewBag.FiltroDataFim">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
+        </a>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5><i class="fas fa-filter"></i> Filtros</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="Dashboard">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="regiao" class="form-label">Região</label>
+                    <select name="regiao" class="form-select">
+                        <option value="">Todas as regiões</option>
+                        @foreach (var regiao in ViewBag.Regioes)
+                        {
+                            <option value="@regiao" selected="@(regiao == ViewBag.FiltroRegiao)">@regiao</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="escolaridade" class="form-label">Escolaridade</label>
+                    <select name="escolaridade" class="form-select">
+                        <option value="">Todas as escolaridades</option>
+                        @foreach (var escolaridade in ViewBag.Escolaridades)
+                        {
+                            <option value="@escolaridade" selected="@(escolaridade == ViewBag.FiltroEscolaridade)">@escolaridade</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="dataInicio" class="form-label">Data Início</label>
+                    <input type="date" name="dataInicio" class="form-control" value="@ViewBag.FiltroDataInicio" />
+                </div>
+                <div class="col-md-2">
+                    <label for="dataFim" class="form-label">Data Fim</label>
+                    <input type="date" name="dataFim" class="form-control" value="@ViewBag.FiltroDataFim" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                    <a asp-action="Dashboard" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Limpar
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>@ViewBag.TotalMoradores</h4>
+                        <p>Total de Moradores</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-map-marker-alt"></i> Moradores por Região</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoRegiao" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-graduation-cap"></i> Moradores por Escolaridade</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoEscolaridade" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Moradores -->
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-table"></i> Lista de Moradores</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Email</th>
+                        <th>Região</th>
+                        <th>Escolaridade</th>
+                        <th>Data Cadastro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var morador in Model)
+                    {
+                        <tr>
+                            <td>@morador.Nome</td>
+                            <td>@morador.CPF</td>
+                            <td>@morador.Email</td>
+                            <td>@morador.Regiao</td>
+                            <td>@morador.Escolaridade</td>
+                            <td>@morador.DataCadastro.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Carregar dados dos gráficos
+        fetch('@Url.Action("GetDadosGraficos", "Admin")' + window.location.search)
+            .then(response => response.json())
+            .then(data => {
+                // Gráfico por Região
+                const ctxRegiao = document.getElementById('graficoRegiao').getContext('2d');
+                new Chart(ctxRegiao, {
+                    type: 'pie',
+                    data: {
+                        labels: data.dadosPorRegiao.map(item => item.regiao),
+                        datasets: [{
+                            data: data.dadosPorRegiao.map(item => item.quantidade),
+                            backgroundColor: [
+                                '#FF6384',
+                                '#36A2EB',
+                                '#FFCE56',
+                                '#4BC0C0',
+                                '#9966FF',
+                                '#FF9F40'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico por Escolaridade
+                const ctxEscolaridade = document.getElementById('graficoEscolaridade').getContext('2d');
+                new Chart(ctxEscolaridade, {
+                    type: 'bar',
+                    data: {
+                        labels: data.dadosPorEscolaridade.map(item => item.escolaridade),
+                        datasets: [{
+                            label: 'Quantidade',
+                            data: data.dadosPorEscolaridade.map(item => item.quantidade),
+                            backgroundColor: '#36A2EB',
+                            borderColor: '#36A2EB',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+}
+
