@@ -75,15 +75,58 @@
 <!-- Estatísticas -->
 <div class="row mb-4">
     <div class="col-md-3">
-        <div class="card bg-primary text-white">
+        <div class="stats-card fade-in-up">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4>@ViewBag.TotalMoradores</h4>
+                    <p class="mb-0">Total de Moradores</p>
+                </div>
+                <div class="align-self-center">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-petrobras-green text-white fade-in-up" style="animation-delay: 0.1s;">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4>@ViewBag.TotalMoradores</h4>
-                        <p>Total de Moradores</p>
+                        <h4 class="text-white">@ViewBag.FeedbacksPendentes</h4>
+                        <p class="mb-0 opacity-75">Feedbacks Pendentes</p>
                     </div>
                     <div class="align-self-center">
-                        <i class="fas fa-users fa-2x"></i>
+                        <i class="fas fa-clock fa-2x text-petrobras-yellow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card gradient-petrobras text-white fade-in-up" style="animation-delay: 0.2s;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="text-white">@ViewBag.AvisosAtivos</h4>
+                        <p class="mb-0 opacity-75">Avisos Ativos</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-bullhorn fa-2x text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark fade-in-up" style="animation-delay: 0.3s;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="text-dark">@ViewBag.NovosCadastros</h4>
+                        <p class="mb-0 opacity-75">Novos Cadastros (30d)</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-plus fa-2x text-dark"></i>
                     </div>
                 </div>
             </div>
@@ -94,55 +137,59 @@
 <!-- Gráficos -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card fade-in-up" style="animation-delay: 0.4s;">
             <div class="card-header">
                 <h5><i class="fas fa-map-marker-alt"></i> Moradores por Região</h5>
             </div>
             <div class="card-body">
-                <canvas id="graficoRegiao" width="400" height="200"></canvas>
+                <div class="position-relative">
+                    <canvas id="graficoRegiao" width="400" height="200"></canvas>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card fade-in-up" style="animation-delay: 0.5s;">
             <div class="card-header">
                 <h5><i class="fas fa-graduation-cap"></i> Moradores por Escolaridade</h5>
             </div>
             <div class="card-body">
-                <canvas id="graficoEscolaridade" width="400" height="200"></canvas>
+                <div class="position-relative">
+                    <canvas id="graficoEscolaridade" width="400" height="200"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Tabela de Moradores -->
-<div class="card">
+<div class="card fade-in-up" style="animation-delay: 0.6s;">
     <div class="card-header">
         <h5><i class="fas fa-table"></i> Lista de Moradores</h5>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Nome</th>
-                        <th>CPF</th>
-                        <th>Email</th>
-                        <th>Região</th>
-                        <th>Escolaridade</th>
-                        <th>Data Cadastro</th>
+                        <th class="fw-bold">Nome</th>
+                        <th class="fw-bold">CPF</th>
+                        <th class="fw-bold">Email</th>
+                        <th class="fw-bold">Região</th>
+                        <th class="fw-bold">Escolaridade</th>
+                        <th class="fw-bold">Data Cadastro</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var morador in Model)
                     {
                         <tr>
-                            <td>@morador.Nome</td>
-                            <td>@morador.CPF</td>
+                            <td class="fw-semibold text-petrobras-blue">@morador.Nome</td>
+                            <td><span class="badge bg-light text-dark">@morador.CPF</span></td>
                             <td>@morador.Email</td>
-                            <td>@morador.Regiao</td>
+                            <td><span class="badge bg-petrobras-green text-white">@morador.Regiao</span></td>
                             <td>@morador.Escolaridade</td>
-                            <td>@morador.DataCadastro.ToString("dd/MM/yyyy")</td>
+                            <td class="text-muted">@morador.DataCadastro.ToString("dd/MM/yyyy")</td>
                         </tr>
                     }
                 </tbody>

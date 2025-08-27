@@ -2,77 +2,178 @@
     ViewData["Title"] = "Página Inicial";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Bem-vindo ao Sistema Petrobras</h1>
-    <p class="lead">Sistema de gestão de moradores e comunicação</p>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-users text-primary"></i> Para Moradores
-                </h5>
-                <p class="card-text">
-                    Cadastre-se, visualize avisos e envie sugestões para a administração.
-                </p>
-                @if (User.Identity != null && !User.Identity.IsAuthenticated)
-                {
-                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">
-                        <i class="fas fa-user-plus"></i> Registrar-se
-                    </a>
-                }
-                else if (User.IsInRole("Morador"))
-                {
-                    <a asp-controller="Morador" asp-action="Index" class="btn btn-primary">
-                        <i class="fas fa-user"></i> Meu Perfil
-                    </a>
-                }
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-cog text-success"></i> Para Administradores
-                </h5>
-                <p class="card-text">
-                    Acesse o dashboard, gerencie moradores e modere feedbacks.
-                </p>
-                @if (User.Identity != null && !User.Identity.IsAuthenticated)
-                {
-                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-success">
-                        <i class="fas fa-sign-in-alt"></i> Fazer Login
-                    </a>
-                }
-                else if (User.IsInRole("Admin"))
-                {
-                    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-success">
-                        <i class="fas fa-chart-bar"></i> Dashboard
-                    </a>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
-@if (User.Identity != null && !User.Identity.IsAuthenticated)
-{
-    <div class="row mt-4">
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-5">
         <div class="col-12">
-            <div class="alert alert-info">
-                <h5><i class="fas fa-info-circle"></i> Informações de Acesso</h5>
-                <p><strong>Administrador padrão:</strong></p>
-                <ul>
-                    <li>Email: admin@petrobras.com</li>
-                    <li>Senha: Admin123!</li>
-                </ul>
-                <p><strong>Para moradores:</strong> Registre-se como novo usuário e será automaticamente atribuído o papel de "Morador".</p>
+            <div class="text-center py-5 fade-in-up">
+                <h1 class="display-4 fw-bold text-petrobras-blue mb-3">
+                    <i class="fas fa-oil-well text-petrobras-yellow me-3"></i>
+                    Bem-vindo ao Sistema Petrobras
+                </h1>
+                <p class="lead text-muted mb-4">Sistema moderno de gestão de moradores e comunicação</p>
+                <div class="d-inline-block px-4 py-2 bg-petrobras-green text-white rounded-pill">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Seguro • Confiável • Eficiente
+                </div>
             </div>
         </div>
     </div>
-}
+
+    <!-- Cards de Acesso -->
+    <div class="row justify-content-center g-4 mb-5">
+        <div class="col-lg-5 col-md-6">
+            <div class="card card-hover-effect h-100 fade-in-up" style="animation-delay: 0.2s;">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-petrobras-blue text-white rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold text-petrobras-blue mb-3">Para Moradores</h5>
+                    <p class="card-text text-muted mb-4">
+                        Cadastre-se, visualize avisos importantes e envie sugestões para a administração de forma rápida e segura.
+                    </p>
+                    @if (User.Identity != null && !User.Identity.IsAuthenticated)
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i> Registrar-se
+                        </a>
+                    }
+                    else if (User.IsInRole("Morador"))
+                    {
+                        <a asp-controller="Morador" asp-action="Index" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user me-2"></i> Meu Perfil
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5 col-md-6">
+            <div class="card card-hover-effect h-100 fade-in-up" style="animation-delay: 0.4s;">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-petrobras-green text-white rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="fas fa-cog fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold text-petrobras-green mb-3">Para Administradores</h5>
+                    <p class="card-text text-muted mb-4">
+                        Acesse o dashboard completo, gerencie moradores e modere feedbacks com ferramentas avançadas de análise.
+                    </p>
+                    @if (User.Identity != null && !User.Identity.IsAuthenticated)
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-success btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i> Fazer Login
+                        </a>
+                    }
+                    else if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-success btn-lg">
+                            <i class="fas fa-chart-bar me-2"></i> Dashboard
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity != null && !User.Identity.IsAuthenticated)
+    {
+        <!-- Informações de Acesso -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <div class="alert alert-info fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x text-petrobras-blue"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-bold text-petrobras-blue mb-3">
+                                <i class="fas fa-key me-2"></i>Informações de Acesso
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="p-3 bg-white rounded-3 border-start border-4 border-success">
+                                        <h6 class="fw-bold text-petrobras-green mb-2">
+                                            <i class="fas fa-user-shield me-2"></i>Administrador Padrão
+                                        </h6>
+                                        <p class="mb-1"><strong>Email:</strong> admin@petrobras.com</p>
+                                        <p class="mb-0"><strong>Senha:</strong> Admin123!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="p-3 bg-white rounded-3 border-start border-4 border-primary">
+                                        <h6 class="fw-bold text-petrobras-blue mb-2">
+                                            <i class="fas fa-users me-2"></i>Para Moradores
+                                        </h6>
+                                        <p class="mb-0">Registre-se como novo usuário e será automaticamente atribuído o papel de "Morador".</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Recursos do Sistema -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="text-center mb-4 fade-in-up">
+                <h3 class="fw-bold text-petrobras-blue">Recursos do Sistema</h3>
+                <p class="text-muted">Conheça as principais funcionalidades disponíveis</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-center h-100 fade-in-up" style="animation-delay: 0.1s;">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line fa-3x text-petrobras-green"></i>
+                    </div>
+                    <h6 class="fw-bold">Dashboard Avançado</h6>
+                    <p class="text-muted small">Gráficos interativos e estatísticas em tempo real</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-center h-100 fade-in-up" style="animation-delay: 0.2s;">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-comments fa-3x text-petrobras-blue"></i>
+                    </div>
+                    <h6 class="fw-bold">Sistema de Feedback</h6>
+                    <p class="text-muted small">Comunicação direta entre moradores e administração</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-center h-100 fade-in-up" style="animation-delay: 0.3s;">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-file-export fa-3x text-petrobras-yellow"></i>
+                    </div>
+                    <h6 class="fw-bold">Relatórios</h6>
+                    <p class="text-muted small">Exportação em CSV e PDF com filtros avançados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card text-center h-100 fade-in-up" style="animation-delay: 0.4s;">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-petrobras-green"></i>
+                    </div>
+                    <h6 class="fw-bold">Segurança</h6>
+                    <p class="text-muted small">Autenticação segura e controle de acesso</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

@@ -22,7 +22,8 @@ namespace SistemaPetrobras.Controllers
             }
             else if (User.IsInRole("Morador"))
             {
-                return RedirectToAction("Index", "Morador");
+                // ✅ CORREÇÃO: Redirecionar moradores direto para avisos
+                return RedirectToAction("Avisos", "Morador");
             }
             
             return View();

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Alunos\\Downloads\\SistemaPetrobras (1)\\SistemaPetrobras\\SistemaPetrobras.csproj": {}
+    "C:\\Users\\Alunos\\Documents\\Saga_senai\\SistemaPetrobras.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Alunos\\Downloads\\SistemaPetrobras (1)\\SistemaPetrobras\\SistemaPetrobras.csproj": {
+    "C:\\Users\\Alunos\\Documents\\Saga_senai\\SistemaPetrobras.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Alunos\\Downloads\\SistemaPetrobras (1)\\SistemaPetrobras\\SistemaPetrobras.csproj",
+        "projectUniqueName": "C:\\Users\\Alunos\\Documents\\Saga_senai\\SistemaPetrobras.csproj",
         "projectName": "SistemaPetrobras",
-        "projectPath": "C:\\Users\\Alunos\\Downloads\\SistemaPetrobras (1)\\SistemaPetrobras\\SistemaPetrobras.csproj",
+        "projectPath": "C:\\Users\\Alunos\\Documents\\Saga_senai\\SistemaPetrobras.csproj",
         "packagesPath": "C:\\Users\\Alunos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Alunos\\Downloads\\SistemaPetrobras (1)\\SistemaPetrobras\\obj\\",
+        "outputPath": "C:\\Users\\Alunos\\Documents\\Saga_senai\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Alunos\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -56,6 +56,22 @@
               "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.0, )"
             },

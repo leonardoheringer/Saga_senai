@@ -10,6 +10,9 @@ using CsvHelper;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace SistemaPetrobras.Controllers
 {
@@ -18,11 +21,42 @@ namespace SistemaPetrobras.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ICompositeViewEngine _viewEngine;
 
-        public AdminController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public AdminController(ApplicationDbContext context, UserManager<IdentityUser> userManager, ICompositeViewEngine viewEngine)
         {
             _context = context;
             _userManager = userManager;
+            _viewEngine = viewEngine;
+        }
+
+        // Método auxiliar para renderizar partial views como string
+        private async Task<string> RenderPartialViewToString(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName))
+                viewName = ControllerContext.ActionDescriptor.ActionName;
+
+            ViewData.Model = model;
+
+            using var writer = new StringWriter();
+            var viewResult = _viewEngine.FindView(ControllerContext, viewName, false);
+
+            if (!viewResult.Success)
+            {
+                return $"Erro: View '{viewName}' não encontrada.";
+            }
+
+            var viewContext = new ViewContext(
+                ControllerContext,
+                viewResult.View,
+                ViewData,
+                TempData,
+                writer,
+                new HtmlHelperOptions()
+            );
+
+            await viewResult.View.RenderAsync(viewContext);
+            return writer.GetStringBuilder().ToString();
         }
 
         public async Task<IActionResult> Dashboard(string? regiao, string? escolaridade, DateTime? dataInicio, DateTime? dataFim)
@@ -43,7 +77,23 @@ namespace SistemaPetrobras.Controllers
 
             var moradores = await query.ToListAsync();
 
+            // Métricas básicas
             ViewBag.TotalMoradores = moradores.Count;
+            
+            // Métricas adicionais
+            ViewBag.FeedbacksPendentes = await _context.Feedbacks
+                .Where(f => f.Status == StatusFeedback.Pendente)
+                .CountAsync();
+                
+            ViewBag.AvisosAtivos = await _context.Avisos
+                .Where(a => a.Ativo)
+                .CountAsync();
+                
+            var dataLimite = DateTime.Now.AddDays(-30);
+            ViewBag.NovosCadastros = await _context.Moradores
+                .Where(m => m.DataCadastro >= dataLimite)
+                .CountAsync();
+            
             ViewBag.Regioes = await _context.Moradores.Select(m => m.Regiao).Distinct().ToListAsync();
             ViewBag.Escolaridades = await _context.Moradores.Select(m => m.Escolaridade).Distinct().ToListAsync();
             ViewBag.FiltroRegiao = regiao;
@@ -257,21 +307,85 @@ namespace SistemaPetrobras.Controllers
 
         public IActionResult CriarAviso()
         {
-            return View();
+            try
+            {
+                // Se for AJAX, retornar PartialView (sem _Layout) para inserir no modal
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return PartialView("CriarAviso", new Aviso());
+
+                return View(new Aviso());
+            }
+            catch (Exception ex)
+            {
+                // Log simples no console do servidor
+                Console.Error.WriteLine(ex);
+
+                // Se for AJAX, retornar o texto do erro para facilitar debug (temporário)
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return StatusCode(500, ex.ToString());
+
+                TempData["Erro"] = "Erro ao abrir formulário de aviso: " + ex.Message;
+                return RedirectToAction("Avisos");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CriarAviso(Aviso aviso)
         {
-            if (ModelState.IsValid)
+            try
             {
-                aviso.AutorId = _userManager.GetUserId(User);
-                _context.Add(aviso);
-                await _context.SaveChangesAsync();
+                if (ModelState.IsValid)
+                {
+                    aviso.AutorId = _userManager.GetUserId(User);
+                    aviso.DataPublicacao = DateTime.Now;
+                    _context.Add(aviso);
+                    await _context.SaveChangesAsync();
+
+                    // ✅ CORREÇÃO: Verificar se é requisição AJAX
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { 
+                            success = true, 
+                            redirectUrl = Url.Action("Avisos"),
+                            message = "Aviso criado com sucesso!"
+                        });
+                    }
+
+                    TempData["Sucesso"] = "Aviso criado com sucesso!";
+                    return RedirectToAction("Avisos");
+                }
+
+                // ✅ CORREÇÃO: Se há erros de validação e é AJAX
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    var htmlContent = await RenderPartialViewToString("CriarAviso", aviso);
+                    return Json(new { 
+                        success = false, 
+                        html = htmlContent,
+                        message = "Por favor, corrija os erros no formulário."
+                    });
+                }
+
+                return View(aviso);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Erro ao criar aviso: {ex}");
+
+                // ✅ CORREÇÃO: Tratamento de erro para AJAX
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { 
+                        success = false, 
+                        message = "Erro interno do servidor. Tente novamente.",
+                        error = ex.Message
+                    });
+                }
+
+                TempData["Erro"] = "Erro ao criar aviso: " + ex.Message;
                 return RedirectToAction("Avisos");
             }
-            return View(aviso);
         }
 
         public async Task<IActionResult> EditarAviso(int id)

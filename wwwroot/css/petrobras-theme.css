@@ -1,0 +1,499 @@
+/* Tema Moderno Petrobras - Sistema de Gestão de Moradores */
+
+:root {
+    /* Cores oficiais Petrobras */
+    --petrobras-green: #00A859;
+    --petrobras-green-dark: #008A47;
+    --petrobras-green-light: #33BA7A;
+    --petrobras-yellow: #FFD700;
+    --petrobras-yellow-dark: #E6C200;
+    --petrobras-blue: #003366;
+    --petrobras-blue-light: #0066CC;
+    
+    /* Cores complementares */
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #E9ECEF;
+    --gray-200: #DEE2E6;
+    --gray-300: #CED4DA;
+    --gray-400: #ADB5BD;
+    --gray-500: #6C757D;
+    --gray-600: #495057;
+    --gray-700: #343A40;
+    --gray-800: #212529;
+    --gray-900: #000000;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transições */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* Reset e Base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--gray-700);
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header e Navegação */
+.navbar {
+    background: linear-gradient(135deg, var(--petrobras-green) 0%, var(--petrobras-green-dark) 100%) !important;
+    box-shadow: var(--shadow-md);
+    border: none !important;
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+    color: var(--white) !important;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.navbar-brand:hover {
+    color: var(--petrobras-yellow) !important;
+    transform: translateY(-1px);
+}
+
+.navbar-brand i {
+    color: var(--petrobras-yellow);
+    margin-right: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.navbar-nav .nav-link {
+    color: var(--white) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem;
+    margin: 0 0.25rem;
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link i {
+    margin-right: 0.5rem;
+    color: var(--petrobras-yellow);
+}
+
+.navbar-toggler {
+    border: 2px solid var(--white);
+    border-radius: 0.5rem;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Cards Modernos */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition-normal);
+    overflow: hidden;
+    background: var(--white);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--petrobras-green) 0%, var(--petrobras-green-light) 100%);
+    color: var(--white);
+    border: none;
+    padding: 1.25rem;
+    font-weight: 600;
+    border-radius: 1rem 1rem 0 0 !important;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.card-header i {
+    color: var(--petrobras-yellow);
+    margin-right: 0.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Botões Modernos */
+.btn {
+    border-radius: 0.75rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: var(--transition-fast);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--transition-normal);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--petrobras-blue) 0%, var(--petrobras-blue-light) 100%);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--petrobras-blue-light) 0%, var(--petrobras-blue) 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--petrobras-green) 0%, var(--petrobras-green-light) 100%);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, var(--petrobras-green-light) 0%, var(--petrobras-green) 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #DC3545 0%, #C82333 100%);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #C82333 0%, #DC3545 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--gray-500) 0%, var(--gray-600) 100%);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-500) 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Alertas Modernos */
+.alert {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: currentColor;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(0, 168, 89, 0.1) 0%, rgba(0, 168, 89, 0.05) 100%);
+    color: var(--petrobras-green-dark);
+    border-left: 4px solid var(--petrobras-green);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+    color: #721C24;
+    border-left: 4px solid #DC3545;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 0%, rgba(0, 102, 204, 0.05) 100%);
+    color: var(--petrobras-blue);
+    border-left: 4px solid var(--petrobras-blue-light);
+}
+
+/* Formulários Modernos */
+.form-control {
+    border: 2px solid var(--gray-200);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: var(--transition-fast);
+    background: var(--white);
+}
+
+.form-control:focus {
+    border-color: var(--petrobras-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 168, 89, 0.25);
+    background: var(--white);
+}
+
+.form-select {
+    border: 2px solid var(--gray-200);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: var(--transition-fast);
+    background: var(--white);
+}
+
+.form-select:focus {
+    border-color: var(--petrobras-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 168, 89, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+}
+
+/* Tabelas Modernas */
+.table {
+    background: var(--white);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--petrobras-green) 0%, var(--petrobras-green-light) 100%);
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background-color: var(--gray-50);
+    transform: scale(1.01);
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-color: var(--gray-100);
+    vertical-align: middle;
+}
+
+/* Estatísticas Cards */
+.stats-card {
+    background: linear-gradient(135deg, var(--petrobras-blue) 0%, var(--petrobras-blue-light) 100%);
+    color: var(--white);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    transform: rotate(45deg);
+}
+
+.stats-card h4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--petrobras-yellow);
+}
+
+.stats-card p {
+    margin: 0;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.stats-card i {
+    font-size: 2.5rem;
+    color: var(--petrobras-yellow);
+    opacity: 0.8;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
+    color: var(--gray-300);
+    padding: 1rem 0;
+    margin-top: 3rem;
+}
+
+.footer a {
+    color: var(--petrobras-yellow);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.footer a:hover {
+    color: var(--white);
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--gray-300);
+    border-top: 2px solid var(--petrobras-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .stats-card h4 {
+        font-size: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* Micro-interações */
+.btn, .card, .form-control, .form-select {
+    transition: all var(--transition-fast);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Gradientes personalizados */
+.gradient-petrobras {
+    background: linear-gradient(135deg, var(--petrobras-green) 0%, var(--petrobras-yellow) 100%);
+}
+
+.gradient-petrobras-blue {
+    background: linear-gradient(135deg, var(--petrobras-blue) 0%, var(--petrobras-blue-light) 100%);
+}
+
+/* Utilitários */
+.text-petrobras-green {
+    color: var(--petrobras-green) !important;
+}
+
+.text-petrobras-yellow {
+    color: var(--petrobras-yellow) !important;
+}
+
+.text-petrobras-blue {
+    color: var(--petrobras-blue) !important;
+}
+
+.bg-petrobras-green {
+    background-color: var(--petrobras-green) !important;
+}
+
+.bg-petrobras-yellow {
+    background-color: var(--petrobras-yellow) !important;
+}
+
+.bg-petrobras-blue {
+    background-color: var(--petrobras-blue) !important;
+}
+

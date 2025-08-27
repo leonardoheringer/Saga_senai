@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SistemaPetrobras")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe3bfe59325ea229e8a5b58a4e727d72c62472e1")]
 [assembly: System.Reflection.AssemblyProductAttribute("SistemaPetrobras")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SistemaPetrobras")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

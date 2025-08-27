@@ -1,0 +1,405 @@
+@model PagedList<Morador>
+@{
+    ViewData["Title"] = "Moradores - Lista Completa";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users"></i> Gerenciar Moradores</h2>
+    <div>
+        <button class="btn btn-success me-2" onclick="exportarSelecionados()">
+            <i class="fas fa-file-export me-2"></i>Exportar Selecionados
+        </button>
+        <a asp-action="Dashboard" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Filtros e Busca Avançada -->
+<div class="card mb-4 fade-in-up">
+    <div class="card-header">
+        <h5><i class="fas fa-search"></i> Busca e Filtros Avançados</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="MoradoresPaginados" id="filtroForm">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="busca" class="form-label">Busca Geral</label>
+                    <input type="text" name="busca" class="form-control search-input" 
+                           placeholder="Nome, CPF ou Email..." value="@ViewBag.FiltroBusca" />
+                </div>
+                <div class="col-md-3">
+                    <label for="regiao" class="form-label">Região</label>
+                    <select name="regiao" class="form-select">
+                        <option value="">Todas as regiões</option>
+                        @foreach (var regiao in ViewBag.Regioes)
+                        {
+                            <option value="@regiao" selected="@(regiao == ViewBag.FiltroRegiao)">@regiao</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="escolaridade" class="form-label">Escolaridade</label>
+                    <select name="escolaridade" class="form-select">
+                        <option value="">Todas as escolaridades</option>
+                        @foreach (var escolaridade in ViewBag.Escolaridades)
+                        {
+                            <option value="@escolaridade" selected="@(escolaridade == ViewBag.FiltroEscolaridade)">@escolaridade</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                    <a asp-action="MoradoresPaginados" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="dataInicio" class="form-label">Data Início</label>
+                    <input type="date" name="dataInicio" class="form-control" value="@ViewBag.FiltroDataInicio" />
+                </div>
+                <div class="col-md-3">
+                    <label for="dataFim" class="form-label">Data Fim</label>
+                    <input type="date" name="dataFim" class="form-control" value="@ViewBag.FiltroDataFim" />
+                </div>
+                <div class="col-md-3">
+                    <label for="ordenacao" class="form-label">Ordenar por</label>
+                    <select name="ordenacao" class="form-select">
+                        <option value="nome" selected="@(ViewBag.Ordenacao == "nome")">Nome</option>
+                        <option value="data" selected="@(ViewBag.Ordenacao == "data")">Data Cadastro</option>
+                        <option value="regiao" selected="@(ViewBag.Ordenacao == "regiao")">Região</option>
+                        <option value="escolaridade" selected="@(ViewBag.Ordenacao == "escolaridade")">Escolaridade</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="itensPorPagina" class="form-label">Itens por página</label>
+                    <select name="itensPorPagina" class="form-select">
+                        <option value="10" selected="@(ViewBag.ItensPorPagina == 10)">10</option>
+                        <option value="25" selected="@(ViewBag.ItensPorPagina == 25)">25</option>
+                        <option value="50" selected="@(ViewBag.ItensPorPagina == 50)">50</option>
+                        <option value="100" selected="@(ViewBag.ItensPorPagina == 100)">100</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Estatísticas Rápidas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-petrobras-blue text-white fade-in-up">
+            <div class="card-body text-center">
+                <h4>@Model.TotalCount</h4>
+                <p class="mb-0">Total de Moradores</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-petrobras-green text-white fade-in-up" style="animation-delay: 0.1s;">
+            <div class="card-body text-center">
+                <h4>@Model.Items.Count()</h4>
+                <p class="mb-0">Exibindo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark fade-in-up" style="animation-delay: 0.2s;">
+            <div class="card-body text-center">
+                <h4>@Model.PageCount</h4>
+                <p class="mb-0">Total de Páginas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card gradient-petrobras text-white fade-in-up" style="animation-delay: 0.3s;">
+            <div class="card-body text-center">
+                <h4>@Model.PageNumber</h4>
+                <p class="mb-0">Página Atual</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Moradores -->
+<div class="card fade-in-up" style="animation-delay: 0.4s;">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="fas fa-table"></i> Lista de Moradores</h5>
+        <div>
+            <input type="checkbox" id="selecionarTodos" class="form-check-input me-2">
+            <label for="selecionarTodos" class="form-check-label">Selecionar Todos</label>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th width="50">
+                            <input type="checkbox" id="selectAllHeader" class="form-check-input">
+                        </th>
+                        <th class="fw-bold sortable" data-sort="nome">
+                            Nome <i class="fas fa-sort text-muted"></i>
+                        </th>
+                        <th class="fw-bold">CPF</th>
+                        <th class="fw-bold">Email</th>
+                        <th class="fw-bold sortable" data-sort="regiao">
+                            Região <i class="fas fa-sort text-muted"></i>
+                        </th>
+                        <th class="fw-bold">Escolaridade</th>
+                        <th class="fw-bold sortable" data-sort="data">
+                            Data Cadastro <i class="fas fa-sort text-muted"></i>
+                        </th>
+                        <th width="120">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var morador in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input morador-checkbox" 
+                                       value="@morador.Id" data-nome="@morador.Nome">
+                            </td>
+                            <td class="fw-semibold text-petrobras-blue">
+                                <i class="fas fa-user me-2 text-muted"></i>
+                                @morador.Nome
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark font-monospace">@morador.CPF</span>
+                            </td>
+                            <td>
+                                <a href="mailto:@morador.Email" class="text-decoration-none">
+                                    <i class="fas fa-envelope me-1 text-muted"></i>
+                                    @morador.Email
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-petrobras-green text-white">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    @morador.Regiao
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info text-white">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    @morador.Escolaridade
+                                </span>
+                            </td>
+                            <td class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                @morador.DataCadastro.ToString("dd/MM/yyyy")
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" 
+                                            onclick="visualizarMorador(@morador.Id)"
+                                            title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-success" 
+                                            onclick="editarMorador(@morador.Id)"
+                                            title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" 
+                                            onclick="verFeedbacks(@morador.Id)"
+                                            title="Ver Feedbacks">
+                                        <i class="fas fa-comments"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Paginação -->
+@if (Model.PageCount > 1)
+{
+    <div class="d-flex justify-content-between align-items-center mt-4 fade-in-up" style="animation-delay: 0.5s;">
+        <div class="text-muted">
+            Exibindo @Model.FirstItemOnPage - @Model.LastItemOnPage de @Model.TotalCount registros
+        </div>
+        
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination pagination-lg mb-0">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("MoradoresPaginados", new { pagina = 1 })">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("MoradoresPaginados", new { pagina = Model.PageNumber - 1 })">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                }
+                
+                @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.PageCount, Model.PageNumber + 2); i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("MoradoresPaginados", new { pagina = i })">@i</a>
+                    </li>
+                }
+                
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("MoradoresPaginados", new { pagina = Model.PageNumber + 1 })">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("MoradoresPaginados", new { pagina = Model.PageCount })">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Seleção múltipla
+        document.getElementById('selectAllHeader').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.morador-checkbox');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateExportButton();
+        });
+        
+        document.querySelectorAll('.morador-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateExportButton);
+        });
+        
+        function updateExportButton() {
+            const selected = document.querySelectorAll('.morador-checkbox:checked').length;
+            const exportBtn = document.querySelector('[onclick="exportarSelecionados()"]');
+            
+            if (selected > 0) {
+                exportBtn.innerHTML = `<i class="fas fa-file-export me-2"></i>Exportar Selecionados (${selected})`;
+                exportBtn.classList.remove('btn-success');
+                exportBtn.classList.add('btn-warning');
+            } else {
+                exportBtn.innerHTML = '<i class="fas fa-file-export me-2"></i>Exportar Selecionados';
+                exportBtn.classList.remove('btn-warning');
+                exportBtn.classList.add('btn-success');
+            }
+        }
+        
+        // Funções de ação
+        function visualizarMorador(id) {
+            // Implementar modal ou página de visualização
+            showToast('Funcionalidade em desenvolvimento', 'info');
+        }
+        
+        function editarMorador(id) {
+            // Implementar edição
+            showToast('Funcionalidade em desenvolvimento', 'info');
+        }
+        
+        function verFeedbacks(id) {
+            // Redirecionar para feedbacks do morador
+            window.location.href = `/Admin/Feedbacks?moradorId=${id}`;
+        }
+        
+        function exportarSelecionados() {
+            const selected = Array.from(document.querySelectorAll('.morador-checkbox:checked'))
+                .map(cb => cb.value);
+                
+            if (selected.length === 0) {
+                showToast('Selecione pelo menos um morador para exportar', 'warning');
+                return;
+            }
+            
+            // Implementar exportação seletiva
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Admin/ExportarSelecionados';
+            
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = id;
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+        
+        // Ordenação
+        document.querySelectorAll('.sortable').forEach(th => {
+            th.addEventListener('click', function() {
+                const sort = this.dataset.sort;
+                const currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('ordenacao', sort);
+                window.location.href = currentUrl.toString();
+            });
+            
+            th.style.cursor = 'pointer';
+        });
+        
+        // Auto-submit do formulário de filtros
+        document.querySelectorAll('#filtroForm select').forEach(select => {
+            select.addEventListener('change', function() {
+                document.getElementById('filtroForm').submit();
+            });
+        });
+        
+        // Busca em tempo real (com debounce)
+        let searchTimeout;
+        document.querySelector('.search-input').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                document.getElementById('filtroForm').submit();
+            }, 500);
+        });
+    </script>
+}
+
+<style>
+.sortable:hover {
+    background-color: rgba(0, 168, 89, 0.1);
+}
+
+.page-link {
+    color: var(--petrobras-green);
+    border-color: var(--petrobras-green);
+}
+
+.page-item.active .page-link {
+    background-color: var(--petrobras-green);
+    border-color: var(--petrobras-green);
+}
+
+.page-link:hover {
+    color: var(--petrobras-green-dark);
+    background-color: rgba(0, 168, 89, 0.1);
+    border-color: var(--petrobras-green);
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.font-monospace {
+    font-family: 'Courier New', monospace;
+}
+</style>
+

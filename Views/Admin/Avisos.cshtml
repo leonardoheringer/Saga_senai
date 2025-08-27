@@ -1,0 +1,242 @@
+@model List<Aviso>
+@{
+    ViewData["Title"] = "Avisos - Administração";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-bullhorn"></i> Avisos</h2>
+    <div>
+        <a href="#" class="btn btn-primary me-2" onclick="abrirCriarAviso(event)">
+            <i class="fas fa-plus me-1"></i> Novo Aviso
+        </a>
+        <a asp-action="Dashboard" asp-controller="Admin" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Voltar ao Dashboard
+        </a>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var aviso in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">@aviso.Titulo</h5>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> @aviso.DataPublicacao.ToString("dd/MM/yyyy HH:mm")
+                                | <i class="fas fa-user"></i> @aviso.AutorId
+                            </small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            @if (aviso.Ativo)
+                            {
+                                <span class="badge bg-success me-2">Ativo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary me-2">Inativo</span>
+                            }
+                            <a asp-action="EditarAviso" asp-route-id="@aviso.Id" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-action="ExcluirAviso" method="post" class="d-inline delete-aviso-form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@aviso.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="card-text">@Html.Raw((aviso.Conteudo ?? string.Empty).Replace("\n", "<br>"))</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Não há avisos publicados.
+    </div>
+}
+
+@section Scripts {
+    <script>
+        async function abrirCriarAviso(event) {
+            event.preventDefault();
+            const url = '/Admin/CriarAviso';
+            const modalBody = document.getElementById('modalCriarAvisoBody');
+
+            console.log('[Avisos] abrirCriarAviso -> GET', url);
+
+            try {
+                const resp = await fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                });
+
+                console.log('[Avisos] GET status:', resp.status, 'redirected:', resp.redirected);
+
+                if (resp.redirected) { 
+                    window.location.href = resp.url; 
+                    return; 
+                }
+
+                const textGet = await resp.text();
+                if (!resp.ok) {
+                    console.error('[Avisos] GET erro:', resp.status, textGet);
+                    modalBody.innerHTML = '<div class="alert alert-danger">Erro ao carregar formulário. Verifique console / network.</div><pre class="small text-muted">' + escapeHtml(textGet).slice(0,2000) + '</pre>';
+                    return;
+                }
+
+                modalBody.innerHTML = textGet;
+                try { 
+                    window.jQuery?.validator?.unobtrusive?.parse?.(modalBody); 
+                } catch (ex) { 
+                    console.warn('validator parse error', ex); 
+                }
+
+                const modalEl = document.getElementById('modalCriarAviso');
+                const bsModal = new bootstrap.Modal(modalEl);
+                bsModal.show();
+
+                bindFormSubmission(modalEl, url, bsModal, modalBody);
+            } catch (err) {
+                console.error('[Avisos] GET fetch error:', err);
+                modalBody.innerHTML = '<div class="alert alert-danger">Erro de conexão ao carregar formulário. Veja console.</div>';
+            }
+        }
+
+        function bindFormSubmission(modalEl, fallbackUrl, bsModal, modalBody) {
+            const form = modalEl.querySelector('form');
+            if (!form) return;
+            
+            // Remove handlers anteriores e adiciona novo
+            form.removeEventListener('submit', onSubmit);
+            form.addEventListener('submit', onSubmit);
+
+            async function onSubmit(e) {
+                e.preventDefault();
+                console.log('[Avisos] submit form ->', form.action || fallbackUrl);
+
+                const fd = new FormData(form);
+                const action = form.action || fallbackUrl;
+
+                let res;
+                try {
+                    res = await fetch(action, {
+                        method: 'POST',
+                        body: fd,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        credentials: 'same-origin'
+                    });
+                } catch (err) {
+                    console.error('[Avisos] POST fetch error:', err);
+                    alert('Erro de conexão ao enviar o formulário. Veja console.');
+                    return;
+                }
+
+                console.log('[Avisos] POST status:', res.status, 'headers:', Array.from(res.headers.entries()));
+                const ct = (res.headers.get('content-type') || '').toLowerCase();
+                const bodyText = await res.text();
+
+                // Mostra resposta completa no console para depuração
+                console.log('[Avisos] POST body:', bodyText);
+
+                if (res.redirected) { 
+                    window.location.href = res.url; 
+                    return; 
+                }
+
+                // Tratar JSON mesmo que content-type não esteja setado corretamente
+                let maybeJson = null;
+                try { 
+                    maybeJson = JSON.parse(bodyText); 
+                } catch {}
+
+                if (maybeJson && typeof maybeJson === 'object') {
+                    console.log('[Avisos] resposta JSON:', maybeJson);
+                    if (maybeJson.success) {
+                        if (maybeJson.redirectUrl) { 
+                            window.location.href = maybeJson.redirectUrl; 
+                            return; 
+                        }
+                        bsModal.hide();
+                        location.reload();
+                        return;
+                    }
+                    modalBody.innerHTML = maybeJson.html || ('<div class="alert alert-warning">' + (maybeJson.message || 'Erro') + '</div>');
+                    try { 
+                        window.jQuery?.validator?.unobtrusive?.parse?.(modalBody); 
+                    } catch {}
+                    return;
+                }
+
+                // Se status 400/401/403/500: pode ser antiforgery ou erro do servidor
+                if (!res.ok) {
+                    let message = '<div class="alert alert-danger"><strong>Erro no servidor (' + res.status + ')</strong><br/>';
+                    message += 'Verifique console/network. Resposta:</div><pre class="small text-muted">' + escapeHtml(bodyText).slice(0,2000) + '</pre>';
+                    modalBody.innerHTML = message;
+                    
+                    // Detectar provável antiforgery
+                    if (res.status === 400 || res.status === 302 || res.status === 401 || res.status === 403) {
+                        console.warn('[Avisos] possível falha AntiForgery ou autenticação. Certifique-se que o Partial contém @Html.AntiForgeryToken() e que cookies/sessão estão ativos.');
+                    }
+                    return;
+                }
+
+                // Caso sucesso com HTML (por exemplo retorna o form com erros ou sucesso parcial)
+                modalBody.innerHTML = bodyText;
+                try { 
+                    window.jQuery?.validator?.unobtrusive?.parse?.(modalBody); 
+                } catch {}
+            }
+        }
+
+        // Utilitário para escapar HTML antes de exibir
+        function escapeHtml(unsafe) {
+            return String(unsafe)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // Confirmação antes de excluir
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-aviso-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    if (!confirm('Confirma exclusão deste aviso? Esta ação não pode ser desfeita.')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Modal para criar aviso -->
+    <div class="modal fade" id="modalCriarAviso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bullhorn"></i> Novo Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body" id="modalCriarAvisoBody">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
